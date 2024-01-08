@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Navigate to the project directory (change the path)
-#cd /path/to/your/project/directory
-
 # Check Python version and start a server accordingly
 if command -v python2 &>/dev/null; then
     python2 -m SimpleHTTPServer

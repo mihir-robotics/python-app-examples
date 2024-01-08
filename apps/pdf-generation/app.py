@@ -53,6 +53,7 @@ def generate_pdf():
     except Exception as e:
         status_label.config(text=f"Error: {e}", fg="red")
 
+# Choose Excel file to be converted
 def choose_file():
     file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
     file_entry.delete(0, tk.END)
