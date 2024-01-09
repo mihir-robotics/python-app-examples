@@ -1,0 +1,31 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form action="/add" method="POST">
+        <input type="text" name="task" placeholder="Enter task...">
+        <button type="submit">Add Task</button>
+    </form>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <form action="/update/{{ loop.index0 }}" method="POST">
+                    <input type="checkbox" {% if task.done %}checked{% endif %} onchange="this.form.submit()">
+                    <span {% if task.done %}style="text-decoration: line-through"{% endif %}>{{ task.task }}</span>
+                </form>
+                <form action="/delete/{{ loop.index0 }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
