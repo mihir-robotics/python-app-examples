@@ -1,40 +1,75 @@
 '''
-Excel to PDF Converter
+This program generates a PDF file from an Excel file using a graphical user interface (GUI) built with CustomTkinter.
 
-This program utilizes Tkinter, FPDF, and Pandas modules to convert Excel files to PDF.
+Dependencies:
+- CustomTkinter: A custom-themed interface built on top of Tkinter for GUI design.
+- fpdf: A Python library used for PDF generation.
+- pandas: A library used for data manipulation with Excel files.
+- os: A standard Python library used for file operations.
 
-Modules:
-- `tkinter`: Provides the GUI for selecting Excel files and generating PDFs.
-- `fpdf`: Enables PDF generation from Excel data.
-- `pandas`: Used for reading and processing Excel data efficiently.
+Methods/Functions:
+- choose_file():  Opens a file dialog window to choose an Excel file.
+- generate_pdf(): Generates a PDF file from the selected Excel file and user-provided PDF name.
 
-Functions:
-- `generate_pdf()`: Initiates PDF generation from the selected Excel file.
-- `choose_file()`: Opens a file dialog to select an Excel file.
+Usage:
+1. Run the program.
+2. Use the 'Browse' button to select an Excel file (*.xlsx).
+3. Enter the desired name for the resulting PDF file.
+4. Click 'Generate PDF' to create the PDF file from the Excel data.
+
+Note: 
+- Ensure that the selected Excel file contains data in a readable format.
+- The generated PDF file will be saved in the SAME directory as the selected Excel file.
 '''
-# Imports for GUI
-import tkinter as tk
+# Import tkinter and CustomTkinter for GUI design
 from tkinter import filedialog
+from tkinter import *
+import customtkinter
 
-# Import for PDF
+# Import fpdf for pdf generation, pandas for reading Excel file, os to manage file-paths
 from fpdf import FPDF
-# Import to read Excel
 import pandas as pd
 import os
 
-# Generate PDF from selected Excel file
+# Define window width and height
+WIDTH = 400
+HEIGHT = 340
+
+# Set theme and default color
+customtkinter.set_appearance_mode("dark")
+
+# Init. window
+root = customtkinter.CTk()
+
+# Set properties of window
+root.geometry(str(WIDTH)+"x"+str(HEIGHT)) 
+root.title("PDF Generator")
+root.resizable(False, False)
+
+# Choose Excel file to be converted
+def choose_file():
+    '''Opens a file dialog window to select an Excel file (*.xlsx).'''
+    file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
+    file_entry.delete(0, customtkinter.END)
+    file_entry.insert(0, file_path)
+
+# Generate PDF
 def generate_pdf():
+    '''Generates a PDF file from the selected Excel file and user-provided PDF name.'''
     excel_file_path = file_entry.get()
     pdf_name = pdf_name_entry.get()
 
+    # Check if excel file is selected
     if excel_file_path == '':
-        status_label.config(text="Please choose an Excel file.", fg="red")
+        status_label.configure(text="Please choose an Excel file.", text_color="red")
         return
 
+    # Check if pdf name has been inputted
     if pdf_name == '':
-        status_label.config(text="Please enter a PDF name.", fg="red")
+        status_label.configure(text="Please enter a PDF name.", text_color="red")
         return
 
+    # Go through excel sheet, and generate PDF at same location
     try:
         df = pd.read_excel(excel_file_path)
         pdf = FPDF()
@@ -48,61 +83,38 @@ def generate_pdf():
 
         excel_directory = os.path.dirname(excel_file_path)
         pdf.output(os.path.join(excel_directory, f"{pdf_name}.pdf"))
-        status_label.config(text="PDF generated successfully.", fg="green")
+        status_label.configure(text="PDF generated successfully.", text_color="green")
         root.after(1000, root.quit)  # Exit after 2000 milliseconds (2 seconds)
+    
     except Exception as e:
-        status_label.config(text=f"Error: {e}", fg="red")
+        status_label.configure(text=f"Error: {e}", text_color="red")
 
-# Choose Excel file to be converted
-def choose_file():
-    file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
-    file_entry.delete(0, tk.END)
-    file_entry.insert(0, file_path)
 
-# Create the main window
-root = tk.Tk()
-root.title("Excel to PDF Converter")
+# File select UI components
+file_frame = customtkinter.CTkFrame(master=root, width=int(0.9*WIDTH), height=80) #, fg_color="transparent"
+file_frame.place(relx=0.5, rely=0.20, anchor=CENTER)
 
-# Styles
-background_color = "#f0f0f0"
-font_style = ("Arial", 10)
-button_bg_color = "#4caf50"
-button_fg_color = "white"
-button_hover_color = "#388e3c"
+file_entry = customtkinter.CTkEntry(master=file_frame,placeholder_text="Choose file...", width=int(0.85*WIDTH), height=30)
+file_entry.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-root.config(bg=background_color)
+# Create browse/select button
+selectButton = customtkinter.CTkButton(master=file_frame, text="Browse", command=choose_file)
+selectButton.place(relx=0.5, rely=0.75, anchor=CENTER)
 
-# File Selection
-file_frame = tk.Frame(root, bg=background_color)
-file_frame.pack(pady=20)
+# PDF name UI components
+pdf_frame = customtkinter.CTkFrame(master=root, width=int(0.9*WIDTH), height=80) #, fg_color="transparent"
+pdf_frame.place(relx=0.5, rely=0.5, anchor=CENTER) 
 
-file_label = tk.Label(file_frame, text="Select Excel file:", bg=background_color, font=font_style)
-file_label.grid(row=0, column=0, padx=10)
+pdf_name_entry = customtkinter.CTkEntry(master=pdf_frame,placeholder_text="Enter PDF Name...", width=int(0.85*WIDTH), height=30)
+pdf_name_entry.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-file_entry = tk.Entry(file_frame, width=50, font=font_style)
-file_entry.grid(row=0, column=1, padx=10)
-
-browse_button = tk.Button(file_frame, text="Browse", command=choose_file, bg=button_bg_color, fg=button_fg_color, 
-                          activebackground=button_hover_color, activeforeground="white", font=font_style)
-browse_button.grid(row=0, column=2, padx=10)
-
-# PDF Name
-pdf_frame = tk.Frame(root, bg=background_color)
-pdf_frame.pack(pady=20)
-
-pdf_name_label = tk.Label(pdf_frame, text="Enter PDF name:", bg=background_color, font=font_style)
-pdf_name_label.grid(row=0, column=0, padx=10)
-
-pdf_name_entry = tk.Entry(pdf_frame, width=50, font=font_style)
-pdf_name_entry.grid(row=0, column=1, padx=10)
-
-# Generate PDF button
-generate_button = tk.Button(root, text="Generate PDF", command=generate_pdf, bg=button_bg_color, fg=button_fg_color,
-                            activebackground=button_hover_color, activeforeground="white", font=font_style)
-generate_button.pack(pady=20)
+# Create generate button
+generateButton = customtkinter.CTkButton(master=pdf_frame, text="Generate PDF", fg_color="green", hover_color="#154406", command=generate_pdf)
+generateButton.place(relx=0.5, rely=0.75, anchor=CENTER)
 
 # Status Label
-status_label = tk.Label(root, text="", bg=background_color, font=font_style)
-status_label.pack()
+status_label = customtkinter.CTkLabel(master=root, text="", font=("Arial",15)) #, fg_color="transparent"
+status_label.place(relx=0.5, rely=0.8, anchor=CENTER)
 
+# run the app
 root.mainloop()

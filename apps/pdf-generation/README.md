@@ -1,8 +1,8 @@
 # Excel to PDF Converter
 
-This Python application, built with Tkinter, enables users to convert Excel files to PDF format easily.
+This Python application, built with CustomTkinter library, enables users to convert Excel files to PDF format easily.
 
-![App Screenshot](app_screenshot.png)
+![App Screenshot](Screenshot.jpg)
 
 ## Features
 
@@ -13,4 +13,4 @@ This Python application, built with Tkinter, enables users to convert Excel file
 ## Requirements
 
 - Python 3.x
-- Required Libraries: tkinter, fpdf, pandas
+- Required Libraries: tkinter, CustomTkinter, fpdf, pandas
