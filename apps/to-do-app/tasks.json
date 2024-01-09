@@ -1,10 +1,14 @@
 [
     {
-        "task": "keep coding",
+        "task": "Fix task data issue",
         "done": false
     },
     {
-        "task": "fix the button issue",
+        "task": "fix resize bug",
+        "done": false
+    },
+    {
+        "task": "lower background opacity issue",
         "done": false
     }
 ]

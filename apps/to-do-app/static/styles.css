@@ -7,16 +7,16 @@ body {
   justify-content: center;
    /* Align items at the top */
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #4a90e2, #5e60ce);
+  background: linear-gradient(to bottom right, #6234ac, #693be6);
 }
 
 h1 {
   text-align: center;
-  margin-top: 50px; /* Adjusted margin */
+  margin-top: 100px; /* Adjusted margin */
   color: white;
   height: fit-content;
   margin-bottom: 10px;
-  font-size: 70px;
+  font-size: 80px;
 }
 
 .container {
@@ -26,7 +26,7 @@ h1 {
   position: absolute;
   top: 20px;
   bottom: 20px;
-  margin-top: 150px; /* Added margin to separate h1 from form */
+  margin-top: 190px; /* Added margin to separate h1 from form */
   margin-right: 0px;
 }
 

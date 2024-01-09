@@ -23,7 +23,7 @@ Note:
 '''
 # Import tkinter and CustomTkinter for GUI design
 from tkinter import filedialog
-from tkinter import *
+from tkinter import CENTER
 import customtkinter
 
 # Import fpdf for pdf generation, pandas for reading Excel file, os to manage file-paths
