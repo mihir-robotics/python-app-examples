@@ -1,7 +1,7 @@
 [
     {
         "task": "Fix task data issue",
-        "done": false
+        "done": true
     },
     {
         "task": "fix resize bug",
@@ -9,6 +9,14 @@
     },
     {
         "task": "lower background opacity issue",
+        "done": false
+    },
+    {
+        "task": "Hello",
+        "done": false
+    },
+    {
+        "task": "hllo",
         "done": false
     }
 ]

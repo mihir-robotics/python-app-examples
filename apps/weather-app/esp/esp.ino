@@ -1,18 +1,29 @@
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h> // For connecting to WiFi
+#include <ESP8266HTTPClient.h>
+#include <DHT.h>    // Sensor Library
 #include "config.h" // to get ssid and password
-#include <DHT.h>
+
 #define BAUD_RATE 115200 // define BAUD_RATE
 #define DHTPIN D3        // Define the pin where the DHT sensor is connected
 #define DHTTYPE DHT11    // Define the type of DHT sensor you're using
 
 // Replace with your network credentials
+/*
 const char *ssid = ssid;
 const char *password = password;
 
 const char *host = host; // Replace with your Flask app's IP or domain; 127... is the dev server default
+*/
+
+const int serverPort = 5000;          // Port of Flask app
+const String endpoint = "/send-data"; // end point
 
 WiFiClient client;
+
+// Create DHT sensor object
 DHT dht(DHTPIN, DHTTYPE);
+// Set delay between sending reading
+const int DELAY = 100;
 
 void setup()
 {
@@ -33,45 +44,31 @@ void setup()
 
 void loop()
 {
-    delay(200); // Delay between sensor readings
+    send_data(get_sensor_data());
+    delay(DELAY); // Wait 100ms before sending data
+}
+
+String get_sensor_data()
+{
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
+    String data = "temperature=" + String(temperature) + "&humidity=" + String(humidity);
+    return data;
+}
 
-    // Display data on serial monitor
-    Serial.print("Temperature: ");
-    Serial.print(temperature);
-    Serial.print(" °C, Humidity: ");
-    Serial.print(humidity);
-    Serial.println("%");
+void send_data(String dataToSend)
+{
+    HTTPClient http;
+    String url = "http://" + String(host) + ":" + String(serverPort) + endpoint;
+    // Send HTTP POST request
+    http.begin(client, url);
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    int httpResponseCode = http.POST(dataToSend);
+    String payload = http.getString();
 
-    if (isnan(humidity) || isnan(temperature))
-    {
-        Serial.println("Failed to read from DHT sensor");
-        return;
-    }
+    String message = "Sent:" + dataToSend + " to -> " + url + " | Payload is: " + payload + " | HTTP Code: " + String(httpResponseCode);
+    Serial.println(message);
 
-    if (client.connect(host, 80))
-    {
-        String url = "/send-data"; // Change this to your Flask route
-        String data = "temperature=" + String(temperature) + "&humidity=" + String(humidity);
-
-        client.print(String("POST ") + url + " HTTP/1.1\r\n" +
-                     "Host: " + host + "\r\n" +
-                     "Content-Length: " + data.length() + "\r\n" +
-                     "Content-Type: application/x-www-form-urlencoded\r\n" +
-                     "Connection: close\r\n\r\n" +
-                     data);
-
-        delay(10);
-        while (client.available())
-        {
-            String response = client.readStringUntil('\r');
-            Serial.print(response);
-        }
-        client.stop();
-    }
-    else
-    {
-        Serial.println("Connection failed");
-    }
+    // Free resources
+    http.end();
 }
