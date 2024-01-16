@@ -1,0 +1,51 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+     /* Align items at the top */
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #352496, #258add);
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    height: fit-content;
+    font-size: 80px;
+    font-weight: bolder;
+}
+
+#sensorData {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 44px;
+    font-weight: bolder;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    margin-top: 250px; /* Added margin to separate h1 from form */
+}
+
+/* Optional: Add a bit of spacing */
+#sensorData {
+    margin-bottom: 160px;
+}
+
+/* Optional: Add responsiveness */
+@media (max-width: 600px) {
+    #sensorData {
+        font-size: 42px;
+    }
+}
+

@@ -9,16 +9,24 @@ sensor_data=""
 def index():
     return render_template('index.html', sensor_data=sensor_data)
 
+@app.route('/get-data', methods=['GET'])
+def get_data():
+    global data
+    return data
+
 @app.route('/send-data', methods=['POST'])
 def receive_data():
     global sensor_data
-    temperature =  request.form.get('temperature')
-    humidity = request.form.get('humidity')
+    global data
+    data = request.get_json()
+    temperature =  data.get('temperature')
+    humidity = data.get('humidity')
+    
     sensor_data = "Temperature: " + str(temperature) + " | Humidity: " + str(humidity) 
     asyncio.run(update_sensor_data())  # Run the asynchronous update
     # Log the received data along with the default log statement
     app.logger.info(f'Received data: {sensor_data}')
-    return str(sensor_data)
+    return data
 
 async def update_sensor_data():
     await asyncio.sleep(1)  # Simulating some asynchronous task

@@ -1,19 +1,12 @@
 #include <ESP8266WiFi.h> // For connecting to WiFi
 #include <ESP8266HTTPClient.h>
-#include <DHT.h>    // Sensor Library
-#include "config.h" // to get ssid and password
+#include <DHT.h>         // Sensor Library
+#include <ArduinoJson.h> // JSON library (v 6.18.0) Future versions might break this...
+#include "config.h"      // to get ssid and password
 
 #define BAUD_RATE 115200 // define BAUD_RATE
 #define DHTPIN D3        // Define the pin where the DHT sensor is connected
 #define DHTTYPE DHT11    // Define the type of DHT sensor you're using
-
-// Replace with your network credentials
-/*
-const char *ssid = ssid;
-const char *password = password;
-
-const char *host = host; // Replace with your Flask app's IP or domain; 127... is the dev server default
-*/
 
 const int serverPort = 5000;          // Port of Flask app
 const String endpoint = "/send-data"; // end point
@@ -44,29 +37,45 @@ void setup()
 
 void loop()
 {
-    send_data(get_sensor_data());
+    // send_data(get_sensor_data());
+    send_JSON(get_data_JSON());
     delay(DELAY); // Wait 100ms before sending data
 }
 
-String get_sensor_data()
+// Function to obtain sensor values and return the jsonString
+DynamicJsonDocument get_data_JSON()
 {
+
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
-    String data = "temperature=" + String(temperature) + "&humidity=" + String(humidity);
-    return data;
+    // const size_t capacity = JSON_OBJECT_SIZE(2) + 2 * JSON_FLOAT_SIZE;
+    DynamicJsonDocument jsonDoc(1024);
+
+    // Add temperature and humidity to the JSON document
+    jsonDoc["temperature"] = temperature;
+    jsonDoc["humidity"] = humidity;
+
+    return jsonDoc;
 }
 
-void send_data(String dataToSend)
+// Send JSON data
+void send_JSON(DynamicJsonDocument jsonData)
 {
+
+    // Serialize the JSON document to a string
+    String jsonString;
+    serializeJson(jsonData, jsonString);
+
     HTTPClient http;
     String url = "http://" + String(host) + ":" + String(serverPort) + endpoint;
     // Send HTTP POST request
     http.begin(client, url);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int httpResponseCode = http.POST(dataToSend);
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.POST(jsonString);
     String payload = http.getString();
 
-    String message = "Sent:" + dataToSend + " to -> " + url + " | Payload is: " + payload + " | HTTP Code: " + String(httpResponseCode);
+    String message = "Sent:" + jsonString + " to -> " + url + " | Payload is: " + payload + " | HTTP Code: " + String(httpResponseCode);
     Serial.println(message);
 
     // Free resources

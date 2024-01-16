@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Async Sensor Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>IoT Sensor Data</title>
 </head>
 <body>
-    <h1>Sensor Data:</h1>
-    <p>{% if sensor_data is defined %}{{ sensor_data }}{% else %}No data received yet{% endif %}</p>
+    <h1>IoT Weather App</h1>
+    <div id="sensorData"></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!--     <p>{% if sensor_data is defined %}{{ sensor_data }}{% else %}No data received yet{% endif %}</p>-->
+
+    
 </body>
 </html>
